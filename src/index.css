@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Spartan:wght@300;400;500;600;700&display=swap");
+
+body {
+  font-family: "Spartan", sans-serif;
+}
+
+body {
+  background-color: #f8f8fb;
+}
+
+[data-theme="dark"] {
+  .list-a {
+    background-color: #141625;
+    color: var(--color-light-bg);
+  }
+  body {
+    background-color: #141625;
+  }
+  .list-card:hover {
+    background-color: #1e2139;
+  }
+  .footer-a {
+    background-color: #141625;
+  }
+  .text-color {
+    color: white;
+  }
+  .txt-color {
+    color: #dfe3fa;
+  }
+  .sidebarr {
+    background-color: #141625;
+  }
+  .ddown {
+    background-color: #252945;
+  }
+  .inputs {
+    background-color: #1e2139;
+  }
+  input {
+    background-color: #1e2139;
+  }
+  .sidebar-text-footer {
+    color: #dfe3fa;
+  }
+  .table-text {
+    color: #dfe3fa;
+  }
+  .table-bg {
+    background-color: rgba(223, 227, 250, 0.1);
+  }
+  .draftbtn {
+    background-color: #373b53;
+  }
+  .drafttxt {
+    color: #dfe3fa;
+  }
+  .detailEditButton {
+    background-color: #252945;
+    color: white;
+  }
+  .detailEditButton:hover {
+    background-color: rgba(255, 255, 255, 1);
+    color: #7e88c3;
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide scrollbar */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
