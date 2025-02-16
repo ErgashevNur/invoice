@@ -6,38 +6,43 @@ import NotFound from "./pages/ErrorPage";
 import InvoiceDetails from "./pages/InvoiceDetails";
 import { Toaster } from "react-hot-toast";
 import InvoiceProvider from "./store/invoiceProvider";
+import { DataProvider } from "./context/useStates";
 
 function App() {
   return (
-    <InvoiceProvider>
-      <Routes>
-        <Route
-          index
-          element={
-            <MainLayout>
-              <Home />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/invoiceDetails/:id"
-          element={
-            <MainLayout>
-              <InvoiceDetails />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <MainLayout>
-              <NotFound />
-            </MainLayout>
-          }
-        />
-      </Routes>
-      <Toaster />
-    </InvoiceProvider>
+    <DataProvider>
+      <InvoiceProvider>
+        <Routes>
+          <Route
+            index
+            element={
+              <MainLayout>
+                <Home />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/invoiceDetails/:id"
+            element={
+              <MainLayout>
+                <InvoiceDetails />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="*"
+            element={
+              <MainLayout>
+                <NotFound />
+              </MainLayout>
+            }
+          />
+        </Routes>
+        <Toaster />
+      </InvoiceProvider>
+    </DataProvider>
   );
 }
 

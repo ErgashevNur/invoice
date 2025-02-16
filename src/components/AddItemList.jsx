@@ -3,20 +3,23 @@ import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 
 function AddItemList() {
-  const [items, setItems] = useState([]);
+  const [iteems, setIteems] = useState([]);
   const formRef = useRef(null);
 
   const addItem = () => {
-    setItems([...items, { id: Date.now(), name: "", qty: 1, price: 0.0 }]);
+    setIteems([...iteems, { id: Date.now(), name: "", qty: 0, price: 0.0 }]);
   };
 
   const removeItem = (id) => {
-    setItems(items.filter((item) => item.id !== id));
+    const isConfirm = confirm("Rostdan ham o'chirmoqchimisiz?");
+    if (isConfirm) {
+      setIteems(iteems.filter((item) => item.id !== id));
+    }
   };
 
   const updateItem = (id, field, value) => {
-    setItems(
-      items.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+    setIteems(
+      iteems.map((item) => (item.id === id ? { ...item, [field]: value } : item))
     );
   };
   return (
@@ -30,7 +33,7 @@ function AddItemList() {
           <span className="">Total</span>
         </div>
 
-        {items.map((item) => (
+        {iteems.map((item) => (
           <div key={item.id} className="flex gap-4 items-center py-2">
             <form ref={formRef}>
               <input
@@ -83,8 +86,8 @@ function AddItemList() {
           type="button"
           onClick={() => {
             if (
-              items.length > 0 &&
-              items[items.length - 1].name.trim().length === 0
+              iteems.length > 0 &&
+              iteems[iteems.length - 1].name.trim().length === 0
             ) {
               // formRef.current["name"][items.length - 1].focus();
               toast.error("Item Name kiritining");

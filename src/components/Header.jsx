@@ -31,7 +31,7 @@ function Header({ setData, data }) {
   }, [filter]);
 
   return (
-    <section className="justify-between flex items-center mx-auto lg:ml-0 mt-24 bg-[#f8f8fb] list-a lg:mt-20 sticky top-[80px] lg:top-0 z-40 px-5">
+    <section className="justify-between flex items-center mx-auto lg:ml-0 bg-[#f8f8fb] list-a z-40 px-5">
       <div className="flex items-center justify-between max-w-[900px] h-28 w-full mx-auto">
         <div className="flex flex-col ">
           <h1 className="font-bold text-[20px] md:text-4xl text-[#0C0E16] text-color">

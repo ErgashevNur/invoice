@@ -4,7 +4,9 @@ import { IoChevronBack } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDelete } from "../store/useDelete";
 import { useInvoice } from "../store/invoiceProvider";
-import EditInvoice from "../components/EditInvoice";
+import { useData } from "../context/useStates";
+
+import axios from "axios";
 
 function InvoiceDetails({ children }) {
   const [add, setAdd] = useState(false);
@@ -13,7 +15,6 @@ function InvoiceDetails({ children }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state, setState } = useInvoice();
-
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("selectedData")) || [];
@@ -39,7 +40,7 @@ function InvoiceDetails({ children }) {
 
   function handleDeleteData(id) {
     deleteInvoice(Number(id));
-    toast.error("Invoice deleted successfully");
+    toast.success("Invoice deleted successfully");
     navigate("/");
   }
 
@@ -76,9 +77,56 @@ function InvoiceDetails({ children }) {
     });
   }
 
+  const handleEditData = async () => {
+    if (!invoice) return;
+
+    const updatedInvoice = { ...invoice, ...state };
+    editInvoice(invoice.id, updatedInvoice);
+    setInvoice(updatedInvoice);
+    toast.success("Ma'lumotlar o'zgartirildi");
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setState((prev) => {
+      if (["street", "city", "postCode", "country"].includes(name)) {
+        return {
+          ...prev,
+          senderAddress: {
+            ...prev.senderAddress,
+            [name]: value,
+          },
+        };
+      }
+
+      if (
+        [
+          "clientStreet",
+          "clientCity",
+          "clientPostCode",
+          "clientCountry",
+        ].includes(name)
+      ) {
+        return {
+          ...prev,
+          clientAddress: {
+            ...prev.clientAddress,
+            [name.replace("client", "").toLowerCase()]: value,
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
   return (
     <section className="mt-24 xl:ml-[103px] sm:h-[100vh] z-30">
-      <div className="px-5 w-full xl:mb-14 max-w-[930px] mx-auto">
+      <div className="px-5 w-full max-w-[930px] mx-auto">
         <a href="/" className="flex items-center gap-6">
           <IoChevronBack />
           <span> Go back</span>
@@ -106,13 +154,240 @@ function InvoiceDetails({ children }) {
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-4">
-            <button
-              onClick={() => handleEditInvoice(id)}
-              className="px-6 py-4 text-[#7E88C3] bg-[#eef1fe] hover:bg-[#c6cfff] detailEditButton rounded-full font-bold"
-            >
-              Edit
-            </button>
+          <div className="hidden sm:flex items-center gap-4 max-w-[600px]">
+            <div className="drawer">
+              <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+              <div className="drawer-content w-20">
+                <label
+                  onClick={handleEditInvoice}
+                  htmlFor="my-drawer"
+                  className="px-6 py-4 text-[#7E88C3] bg-[#eef1fe] hover:bg-[#c6cfff] detailEditButton rounded-full font-bold"
+                >
+                  Edit
+                </label>
+              </div>
+              <div className="drawer-side lg:ml-[95px]">
+                <label
+                  htmlFor="my-drawer"
+                  aria-label="close sidebar"
+                  className="drawer-overlay"
+                ></label>
+                <div className="menu list-a bg-base-200 text-base-content min-h-full max-w-[600px] w-full p-5">
+                  <form>
+                    <div className="px-8">
+                      <h1 className="list-a bg-[#f8f8fb] py-3 text-2xl font-bold mb-12 sticky top-0 left-0">
+                        #{invoice?.idd}
+                      </h1>
+                      <div className="">
+                        <h3 className="text-primary text-sm font-bold mb-6">
+                          Bill From
+                        </h3>
+                        <div className="mb-6 ">
+                          <label className="block font-normal text-light2 text-sm mb-2">
+                            Street Address
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-3 rounded-md border font-bold buttons border-gray-600"
+                            defaultValue={invoice?.senderAddress.street}
+                            onChange={handleChange}
+                            name="street"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-12">
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              City
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md font-bold buttons border border-gray-600"
+                              defaultValue={invoice?.senderAddress.city}
+                              onChange={handleChange}
+                              name="city"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Post Code
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md font-bold buttons border border-gray-600"
+                              defaultValue={invoice?.senderAddress.postCode}
+                              onChange={handleChange}
+                              name="postCode"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Country
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md buttons font-bold border border-gray-600"
+                              defaultValue={invoice?.senderAddress.country}
+                              onChange={handleChange}
+                              name="country"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <h3 className="text-primary text-sm font-bold mb-6">
+                            Bill To
+                          </h3>
+                          <label className="block font-normal text-light2 text-sm mb-2 border-gray-600">
+                            Client's Name
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-3 buttons rounded-md font-bold border border-gray-600"
+                            defaultValue={invoice?.clientName}
+                            onChange={handleChange}
+                            name="clientName"
+                          />
+                        </div>
+
+                        <div className="mb-6">
+                          <label className="block font-normal text-light2 text-sm mb-2">
+                            Client's Email
+                          </label>
+                          <input
+                            type="email"
+                            className="w-full border buttons p-3 font-bold rounded-md border-gray-600"
+                            defaultValue={invoice?.clientEmail}
+                            onChange={handleChange}
+                            name="clientEmail"
+                          />
+                        </div>
+
+                        <div className="mb-6">
+                          <label className="block font-normal text-light2 text-sm mb-2">
+                            Street Address
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full p-3 rounded-md border font-bold buttons border-gray-600"
+                            defaultValue={invoice?.clientAddress.street}
+                            onChange={handleChange}
+                            name="street"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-12">
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              City
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md font-bold buttons border border-gray-600"
+                              defaultValue={invoice?.clientAddress.city}
+                              onChange={handleChange}
+                              name="city"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Post Code
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md font-bold buttons border border-gray-600"
+                              defaultValue={invoice?.clientAddress.postCode}
+                              onChange={handleChange}
+                              name="postCode"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Country
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-3 rounded-md buttons font-bold border border-gray-600"
+                              defaultValue={invoice?.clientAddress.country}
+                              onChange={handleChange}
+                              name="country"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2  gap-6 mb-6">
+                          <div className="w-full ">
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Project Description
+                            </label>
+                            <input
+                              type="date"
+                              className="w-full border cursor-pointer buttons p-3 rounded-md font-bold border-gray-600"
+                              defaultValue={invoice?.createdAt}
+                              onChange={handleChange}
+                              name="createdAt"
+                            />
+                          </div>
+
+                          <div className="w-full">
+                            <label className="block font-normal text-light2 text-sm mb-2">
+                              Payment Terms
+                            </label>
+                            <select
+                              defaultValue={invoice?.paymentTerms}
+                              onChange={handleChange}
+                              name="paymentTerms"
+                              className="w-full inputs bg-inherit cursor-pointer border buttons font-bold rounded-md border-gray-600 p-4"
+                            >
+                              <option>Filter by status</option>
+                              <option value="Number(1)">Next 1 day</option>
+                              <option value="Number(7)">Next 7 days</option>
+                              <option value="Number(14)">Next 14 days</option>
+                              <option value="Number(30)">Next 30 days</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <label className="block font-normal  text-light2 text-sm mb-2">
+                            Project Description
+                          </label>
+                          <input
+                            type="text"
+                            onChange={handleChange}
+                            className="w-full border buttons p-3 rounded-md font-bold border-gray-600"
+                            defaultValue={invoice?.description}
+                            name="description"
+                          />
+                        </div>
+                        {/* <AddItemList />*/}
+                      </div>
+                    </div>
+                  </form>
+
+                  <div className="flex justify-between gap-3 font-bold text-sm mt-10 sticky left-0 bottom-0 bg-[white] inputs rounded-md py-5 max-w-[700px] w-full px-10">
+                    <button
+                      onClick={() =>
+                        (document.getElementById("my-drawer").checked = false)
+                      }
+                      className="bg-[#F9FAFE] text-[#7E88C3] px-5 rounded-full"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      onClick={handleEditData}
+                      type="button"
+                      className="px-6 py-3 rounded-3xl bg-[#7C5DFA] text-[#ffffff]"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div onClick={() => document.getElementById("delete").showModal()}>
               <button className="px-6 py-4 hover:bg-[rgba(255,151,151,1)] bg-[#EC5757] rounded-full text-white font-bold">
@@ -149,15 +424,17 @@ function InvoiceDetails({ children }) {
               </dialog>
             </div>
 
-            {invoice?.status !== "pending" ||
-              ("draft" && (
-                <button
-                  className="px-6 py-4 hover:bg-[rgba(146,119,255,1)] bg-[#7C5DFA] rounded-full text-white font-bold"
-                  onClick={() => StatusChange(id)}
-                >
-                  Mark as Paid
-                </button>
-              ))}
+            <div>
+              {invoice?.status !== "pending" ||
+                ("draft" && (
+                  <button
+                    className="w-36 px-3 py-4 hover:bg-[rgba(146,119,255,1)] bg-[#7C5DFA] rounded-full text-white font-bold"
+                    onClick={() => StatusChange(id)}
+                  >
+                    Mark as Paid
+                  </button>
+                ))}
+            </div>
           </div>
         </div>
 
@@ -220,7 +497,7 @@ function InvoiceDetails({ children }) {
           </div>
 
           <div className="sm:hidden bg-[#252945] p-6 rounded-tl-lg rounded-tr-lg mt-10 flex gap-6 flex-col text-white">
-            {invoice?.items.map((item, index) => (
+            {invoice?.items?.map((item, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div>
                   <h3 className="font-bold text-xs">{item.name}</h3>
@@ -228,7 +505,7 @@ function InvoiceDetails({ children }) {
                     {item.quantity} x £{item.price.toFixed(2)}
                   </p>
                 </div>
-                <p>£{item.total}</p>
+                <p>£{(item?.total).toFixed(2)}</p>
               </div>
             ))}
           </div>
@@ -244,16 +521,14 @@ function InvoiceDetails({ children }) {
                 </tr>
               </thead>
               <tbody>
-                {invoice?.items.map((item, index) => (
+                {invoice?.items?.map((item, index) => (
                   <tr key={index} className="">
                     <td className="py-2 font-semibold">{item.name}</td>
                     <td className="py-2 text-center">{item.quantity}</td>
                     <td className="py-2 text-right">
                       £{item.price.toFixed(2)}
                     </td>
-                    <td className="py-2 text-right">
-                      £{item.total.toFixed(2)}
-                    </td>
+                    <td className="py-2 text-right">£{item?.total}</td>
                   </tr>
                 ))}
               </tbody>
@@ -324,14 +599,6 @@ function InvoiceDetails({ children }) {
             ))}
         </div>
       </div>
-      {add == true && (
-        <EditInvoice
-          add={add}
-          onClose={() => {
-            setAdd(false);
-          }}
-        />
-      )}
     </section>
   );
 }

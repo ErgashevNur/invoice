@@ -29,7 +29,7 @@ function Table({ data }) {
 
   return (
     <>
-      <div className="z-10 max-w-[900px] mx-auto mt-16 px-5">
+      <div className="z-10 max-w-[900px] mx-auto mt-16 px-5 h-[550px] overflow-y-auto scrollbar-custom">
         {data?.length > 0 && (
           <ul className="table  table-xs table-pin-rows table-pin-cols max-w-[900px] mx-auto">
             {data?.length > 0 &&
