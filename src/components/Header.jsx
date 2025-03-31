@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 
 const filterItem = ["draft", "pending", "paid"];
 
-function Header({ setData, data }) {
+function Header() {
+  const [data, setData] = useState();
   const [filter, setFilter] = useState({
     draft: false,
     pending: false,

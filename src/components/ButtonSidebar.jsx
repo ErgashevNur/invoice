@@ -201,7 +201,7 @@ export const InvoiceForm = ({ data, setData }) => {
       ),
     };
     axios
-      .post("https://json-api.uz/api/project/Invoice/data", newInvoice, {
+      .post("https://json-api.uz/api/project/Ergashev's/data", newInvoice, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -265,7 +265,7 @@ export const InvoiceForm = ({ data, setData }) => {
       total: 1598,
     };
     axios
-      .post("https://json-api.uz/api/project/Invoice/data", newInvoice, {
+      .post("https://json-api.uz/api/project/Ergashev's/data", newInvoice, {
         headers: {
           "Content-Type": "application/json",
         },

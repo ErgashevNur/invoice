@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MdNavigateNext } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { getAllData } from "../axios";
 
-function Table({ data }) {
+function Table({}) {
+  const [data, setData] = useState();
   const navigate = useNavigate();
 
   const statusColors = {
@@ -15,6 +17,15 @@ function Table({ data }) {
     pending: "bg-[#FF8F00]",
     default: "table-bg bg-[#373B53]",
   };
+
+  useEffect(() => {
+    getAllData()
+      .then((res) => {
+        setData(res);
+      })
+      .catch(() => {})
+      .finally(() => {});
+  }, []);
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -40,7 +51,7 @@ function Table({ data }) {
                   key={index}
                 >
                   <div className="items-center grid grid-cols-2 md:grid-cols-5 md:pl-[32px]">
-                    <p className="">#{d.idd}</p>
+                    <p className="">#{d.id}</p>
                     <p className="">Due {d.paymentDue}</p>
                     <p className="">{d.clientName}</p>
                     <p className="w-10">{d.total}</p>

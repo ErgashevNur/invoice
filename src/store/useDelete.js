@@ -1,7 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 
-const API_URL = "https://json-api.uz/api/project/Invoice/data";
+const API_URL = "https://json-api.uz/api/project/Ergashev's/data";
 
 export const useDelete = create((set) => ({
   invoices: [],
@@ -24,7 +24,7 @@ export const useDelete = create((set) => ({
 
       set((state) => ({
         invoices: state.invoices.map((invoice) =>
-          invoice.id === id ? {...invoice, ...updatedData} : invoice
+          invoice.id === id ? { ...invoice, ...updatedData } : invoice
         ),
       }));
     } catch (error) {

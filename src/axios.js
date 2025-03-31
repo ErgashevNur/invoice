@@ -1,13 +1,12 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { queryGenerator } from "./utils";
 
 export const api = axios.create({
-  baseURL: "https://json-api.uz/api/project/Invoice",
+  baseURL: "https://json-api.uz/api/project/Ergashev's",
 });
 
 export async function getAllData() {
-  const req = await fetch(`https://json-api.uz/api/project/Invoice/data`);
+  const req = await fetch(`https://json-api.uz/api/project/Ergashev's/data`);
 
   if (req.status === 200) {
     const { data } = await req.json();
@@ -19,7 +18,7 @@ export async function getAllData() {
 
 export async function getFilter(filter) {
   const req = await fetch(
-    `https://json-api.uz/api/project/Invoice/data${
+    `https://json-api.uz/api/project/Ergashev's/data${
       queryGenerator(filter) !== "" ? `?status=${queryGenerator(filter)}` : ""
     }`
   );

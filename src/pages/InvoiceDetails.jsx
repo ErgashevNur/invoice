@@ -176,7 +176,7 @@ function InvoiceDetails({ children }) {
                   <form>
                     <div className="px-8">
                       <h1 className="list-a bg-[#f8f8fb] py-3 text-2xl font-bold mb-12 sticky top-0 left-0">
-                        #{invoice?.idd}
+                        #{invoice?.id}
                       </h1>
                       <div className="">
                         <h3 className="text-primary text-sm font-bold mb-6">
@@ -443,7 +443,7 @@ function InvoiceDetails({ children }) {
             <div className="mb-8">
               <p className="font-bold text-color ">
                 <span className="text-[#7E88C3]">#</span>
-                {invoice?.idd}
+                {invoice?.id}
               </p>
               <p className="font-normal">{invoice?.description}</p>
             </div>
